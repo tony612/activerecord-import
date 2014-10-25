@@ -277,7 +277,9 @@ class ActiveRecord::Base
     # +options+.
     def import_without_validations_or_callbacks( column_names, array_of_attributes, options={} )
       column_names = column_names.map(&:to_sym)
-      scope_columns, scope_values = scope_attributes.to_a.transpose
+      fixed_scope_attributes = scope_attributes
+      fixed_scope_attributes.delete("type") if fixed_scope_attributes.has_key?(:type)
+      scope_columns, scope_values = fixed_scope_attributes.to_a.transpose
 
       unless scope_columns.blank?
         scope_columns.zip(scope_values).each do |name, value|
